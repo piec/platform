@@ -14,6 +14,7 @@ import (
 	"github.com/mattermost/platform/api4"
 	"github.com/mattermost/platform/app"
 	"github.com/mattermost/platform/einterfaces"
+	"github.com/mattermost/platform/job"
 	"github.com/mattermost/platform/manualtesting"
 	"github.com/mattermost/platform/model"
 	"github.com/mattermost/platform/utils"
@@ -112,6 +113,8 @@ func runServer(configFileLocation string) {
 		einterfaces.GetMetricsInterface().StartServer()
 	}
 
+	jobs := job.InitJobs(app.Srv.Store).StartAll()
+
 	// wait for kill signal before attempting to gracefully shutdown
 	// the running service
 	c := make(chan os.Signal)
@@ -125,6 +128,8 @@ func runServer(configFileLocation string) {
 	if einterfaces.GetMetricsInterface() != nil {
 		einterfaces.GetMetricsInterface().StopServer()
 	}
+
+	jobs.StopAll()
 
 	app.StopServer()
 }
