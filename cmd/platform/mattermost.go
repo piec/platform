@@ -14,13 +14,14 @@ import (
 	// Plugins
 	_ "github.com/mattermost/platform/model/gitlab"
 
+	// Enterprise Imports
+	_ "github.com/mattermost/platform/imports"
+
 	// Enterprise Deps
 	_ "github.com/dgryski/dgoogauth"
 	_ "github.com/go-ldap/ldap"
 	_ "github.com/mattermost/rsc/qr"
 )
-
-//ENTERPRISE_IMPORTS
 
 func main() {
 	if err := rootCmd.Execute(); err != nil {
