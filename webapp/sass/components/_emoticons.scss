@@ -52,19 +52,10 @@
     flex-direction: column;
     @include user-select(none);
     position: absolute;
-    top: -361px;
-    right: 0px;
+    height: 362px;
     width: 278px;
     border: 1px solid;
     border-radius: 3px;
-
-    &.emoji-picker-bottom {
-        z-index: 40;
-        right: 0%;
-        border: 1px solid;
-        min-height: 298px;
-        border-radius: 3px;
-    }
 }
 
 .emoji-picker-react,

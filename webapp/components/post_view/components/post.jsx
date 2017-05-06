@@ -36,7 +36,8 @@ export default class Post extends Component {
         isFlagged: PropTypes.bool,
         status: PropTypes.string,
         isBusy: PropTypes.bool,
-        childComponentDidUpdateFunction: PropTypes.func
+        childComponentDidUpdateFunction: PropTypes.func,
+        getPostList: PropTypes.func.isRequired
     };
 
     constructor(props) {
@@ -301,6 +302,7 @@ export default class Post extends Component {
                                 isFlagged={this.props.isFlagged}
                                 status={this.props.status}
                                 isBusy={this.props.isBusy}
+                                getPostList={this.props.getPostList}
                             />
                             <PostBody
                                 post={post}

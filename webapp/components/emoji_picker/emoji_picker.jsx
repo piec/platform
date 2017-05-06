@@ -9,7 +9,6 @@ import EmojiStore from 'stores/emoji_store.jsx';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 import ReactDOM from 'react-dom';
 import * as Utils from 'utils/utils.jsx';
-import ReactOutsideEvent from 'react-outside-event';
 import {FormattedMessage} from 'react-intl';
 
 import EmojiPickerCategory from './components/emoji_picker_category.jsx';
@@ -30,13 +29,13 @@ const CATEGORIES = [
     'custom'
 ];
 
-class EmojiPicker extends React.Component {
+export default class EmojiPicker extends React.Component {
     static propTypes = {
+        style: React.PropTypes.object,
+        placement: React.PropTypes.oneOf(['top', 'bottom', 'left']),
         customEmojis: React.PropTypes.object,
         onEmojiClick: React.PropTypes.func.isRequired,
-        pickerLocation: React.PropTypes.string.isRequired,
-        emojiOffset: React.PropTypes.number,
-        outsideClick: React.PropTypes.func
+        pickerLocation: React.PropTypes.string.isRequired
     }
 
     constructor(props) {
@@ -53,7 +52,6 @@ class EmojiPicker extends React.Component {
         this.handleScroll = this.handleScroll.bind(this);
         this.handleItemUnmount = this.handleItemUnmount.bind(this);
         this.renderCategory = this.renderCategory.bind(this);
-        this.onOutsideEvent = this.onOutsideEvent.bind(this);
 
         this.state = {
             category: 'recent',
@@ -63,14 +61,11 @@ class EmojiPicker extends React.Component {
     }
 
     componentDidMount() {
-        this.searchInput.focus();
-    }
-
-    onOutsideEvent = (event) => {
-        // Handle the event.
-        if (this.props.outsideClick) {
-            this.props.outsideClick(event);
-        }
+        // Delay taking focus because this briefly renders offscreen when using an Overlay
+        // so focusing it immediately on mount can cause weird scrolling
+        requestAnimationFrame(() => {
+            this.searchInput.focus();
+        });
     }
 
     handleCategoryClick(category) {
@@ -99,7 +94,7 @@ class EmojiPicker extends React.Component {
     }
 
     handleItemUnmount(emoji) {
-        //Prevent emoji preview from showing emoji which is not present anymore (due to filter)
+        // Prevent emoji preview from showing emoji which is not present anymore (due to filter)
         if (this.state.selected === emoji) {
             this.setState({selected: null});
         }
@@ -300,7 +295,20 @@ class EmojiPicker extends React.Component {
             cssclass = 'emoji-picker-react-rhs-comment';
         }
 
-        const pickerStyle = this.props.emojiOffset ? {top: this.props.emojiOffset} : {};
+        let pickerStyle;
+        if (this.props.style && !(this.props.style.left === 0 || this.props.style.top === 0)) {
+            if (this.props.placement === 'top' || this.props.placement === 'bottom') {
+                // Only take the top/bottom position passed by React Bootstrap since we want to be right-aligned
+                pickerStyle = {
+                    top: this.props.style.top,
+                    bottom: this.props.style.bottom,
+                    right: 1
+                };
+            } else {
+                pickerStyle = this.props.style;
+            }
+        }
+
         return (
             <div
                 style={pickerStyle}
@@ -423,7 +431,3 @@ class EmojiPicker extends React.Component {
         );
     }
 }
-
-// disabling eslint check for outslide click handler
-// eslint-disable-next-line new-cap
-export default ReactOutsideEvent(EmojiPicker, ['click']);

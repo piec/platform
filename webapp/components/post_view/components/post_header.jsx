@@ -88,6 +88,7 @@ export default class PostHeader extends React.Component {
                         compactDisplay={this.props.compactDisplay}
                         useMilitaryTime={this.props.useMilitaryTime}
                         isFlagged={this.props.isFlagged}
+                        getPostList={this.props.getPostList}
                     />
                 </li>
             </ul>
@@ -115,5 +116,6 @@ PostHeader.propTypes = {
     useMilitaryTime: React.PropTypes.bool.isRequired,
     isFlagged: React.PropTypes.bool.isRequired,
     status: React.PropTypes.string,
-    isBusy: React.PropTypes.bool
+    isBusy: React.PropTypes.bool,
+    getPostList: React.PropTypes.func.isRequired
 };
