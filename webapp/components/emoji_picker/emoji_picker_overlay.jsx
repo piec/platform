@@ -54,10 +54,7 @@ export default class EmojiPickerOverlay extends PureComponent {
                 target={this.props.target}
                 animation={false}
             >
-                <EmojiPicker
-                    onEmojiClick={this.props.onEmojiClick}
-                    pickerLocation='xxx remove me xxx'
-                />
+                <EmojiPicker onEmojiClick={this.props.onEmojiClick}/>
             </Overlay>
         );
     }

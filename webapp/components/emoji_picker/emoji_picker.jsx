@@ -34,8 +34,7 @@ export default class EmojiPicker extends React.Component {
         style: React.PropTypes.object,
         placement: React.PropTypes.oneOf(['top', 'bottom', 'left']),
         customEmojis: React.PropTypes.object,
-        onEmojiClick: React.PropTypes.func.isRequired,
-        pickerLocation: React.PropTypes.string.isRequired
+        onEmojiClick: React.PropTypes.func.isRequired
     }
 
     constructor(props) {
@@ -284,16 +283,6 @@ export default class EmojiPicker extends React.Component {
                 items.push(this.renderCategory(category, this.state.filter));
             }
         }
-        let cssclass = 'emoji-picker ';
-        if (this.props.pickerLocation === 'top') {
-            cssclass += 'emoji-picker-top';
-        } else if (this.props.pickerLocation === 'bottom') {
-            cssclass += 'emoji-picker-bottom';
-        } else if (this.props.pickerLocation === 'react') {
-            cssclass = 'emoji-picker-react';
-        } else if (this.props.pickerLocation === 'react-rhs-comment') {
-            cssclass = 'emoji-picker-react-rhs-comment';
-        }
 
         let pickerStyle;
         if (this.props.style && !(this.props.style.left === 0 || this.props.style.top === 0)) {
@@ -311,8 +300,8 @@ export default class EmojiPicker extends React.Component {
 
         return (
             <div
+                className='emoji-picker'
                 style={pickerStyle}
-                className={cssclass}
             >
                 <div className='emoji-picker__categories'>
                     <EmojiPickerCategory

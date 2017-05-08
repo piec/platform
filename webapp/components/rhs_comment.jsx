@@ -19,12 +19,11 @@ import * as PostUtils from 'utils/post_utils.jsx';
 
 import Constants from 'utils/constants.jsx';
 import DelayedAction from 'utils/delayed_action.jsx';
-import {Tooltip, OverlayTrigger, Overlay} from 'react-bootstrap';
+import {Tooltip, OverlayTrigger} from 'react-bootstrap';
 
 import {FormattedMessage} from 'react-intl';
 
-import EmojiPicker from 'components/emoji_picker/emoji_picker.jsx';
-import ReactDOM from 'react-dom';
+import EmojiPickerOverlay from 'components/emoji_picker/emoji_picker_overlay.jsx';
 
 import loadingGif from 'images/load.gif';
 
@@ -42,7 +41,6 @@ export default class RhsComment extends React.Component {
         this.pinPost = this.pinPost.bind(this);
         this.unpinPost = this.unpinPost.bind(this);
         this.reactEmojiClick = this.reactEmojiClick.bind(this);
-        this.emojiPickerClick = this.emojiPickerClick.bind(this);
 
         this.canEdit = false;
         this.canDelete = false;
@@ -52,8 +50,7 @@ export default class RhsComment extends React.Component {
             currentTeamDisplayName: TeamStore.getCurrent().name,
             width: '',
             height: '',
-            showReactEmojiPicker: false,
-            reactPickerOffset: 15
+            showEmojiPicker: false
         };
     }
 
@@ -124,7 +121,7 @@ export default class RhsComment extends React.Component {
             return true;
         }
 
-        if (this.state.showReactEmojiPicker !== nextState.showReactEmojiPicker) {
+        if (this.state.showEmojiPicker !== nextState.showEmojiPicker) {
             return true;
         }
 
@@ -340,22 +337,12 @@ export default class RhsComment extends React.Component {
             );
     }
 
-    emojiPickerClick() {
-        // set default offset
-        let reactOffset = 15;
-        const reactSelectorHeight = 360;
-        const reactionIconY = ReactDOM.findDOMNode(this).getBoundingClientRect().top;
-        const rhsMinHeight = 700;
-
-        const spaceAvail = rhsMinHeight - reactionIconY;
-        if (spaceAvail < reactSelectorHeight) {
-            reactOffset = (spaceAvail - reactSelectorHeight);
-        }
-        this.setState({showReactEmojiPicker: !this.state.showReactEmojiPicker, reactPickerOffset: reactOffset});
+    toggleEmojiPicker = () => {
+        this.setState({showEmojiPicker: !this.state.showEmojiPicker});
     }
 
     reactEmojiClick(emoji) {
-        this.setState({showReactEmojiPicker: false});
+        this.setState({showEmojiPicker: false});
         const emojiName = emoji.name || emoji.aliases[0];
         addReaction(this.props.post.channel_id, this.props.post.id, emojiName);
     }
@@ -582,38 +569,25 @@ export default class RhsComment extends React.Component {
         }
 
         let react;
-        let reactOverlay;
-
         if (!isEphemeral && !isPending && !isSystemMessage && Utils.isFeatureEnabled(Constants.PRE_RELEASE_FEATURES.EMOJI_PICKER_PREVIEW)) {
             react = (
                 <span>
+                    <EmojiPickerOverlay
+                        show={this.state.showEmojiPicker}
+                        onHide={this.toggleEmojiPicker}
+                        target={() => this.refs.dotMenu}
+                        container={this.props.getPostList}
+                        onEmojiClick={this.reactEmojiClick}
+                    />
                     <a
                         href='#'
                         className='reacticon__container reaction'
-                        onClick={this.emojiPickerClick}
+                        onClick={this.toggleEmojiPicker}
                         ref={'rhs_reacticon_' + post.id}
                     ><i className='fa fa-smile-o'/>
                     </a>
                 </span>
 
-            );
-            reactOverlay = (
-                <Overlay
-                    id={'rhs_react_overlay_' + post.id}
-                    show={this.state.showReactEmojiPicker}
-                    placement='top'
-                    rootClose={true}
-                    container={this.refs['post_body_' + post.id]}
-                    onHide={() => this.setState({showReactEmojiPicker: false})}
-                    target={() => ReactDOM.findDOMNode(this.refs['rhs_reacticon_' + post.id])}
-                    animation={false}
-                >
-                    <EmojiPicker
-                        onEmojiClick={this.reactEmojiClick}
-                        pickerLocation='react-rhs-comment'
-                        emojiOffset={this.state.reactPickerOffset}
-                    />
-                </Overlay>
             );
         }
 
@@ -626,8 +600,10 @@ export default class RhsComment extends React.Component {
             );
         } else if (!isSystemMessage) {
             options = (
-                <li className='col col__reply'>
-                    {reactOverlay}
+                <li
+                    ref='dotMenu'
+                    className='col col__reply'
+                >
                     {this.createDropdown(isSystemMessage)}
                     {react}
                 </li>
@@ -695,5 +671,6 @@ RhsComment.propTypes = {
     useMilitaryTime: React.PropTypes.bool.isRequired,
     isFlagged: React.PropTypes.bool,
     status: React.PropTypes.string,
-    isBusy: React.PropTypes.bool
+    isBusy: React.PropTypes.bool,
+    getPostList: React.PropTypes.func.isRequired
 };

@@ -320,6 +320,10 @@ export default class RhsThread extends React.Component {
         });
     }
 
+    getPostListContainer = () => {
+        return this.refs.postListContainer;
+    }
+
     render() {
         const postsArray = this.state.postsArray;
         const selected = this.state.selected;
@@ -394,6 +398,7 @@ export default class RhsThread extends React.Component {
                         isFlagged={isFlagged}
                         status={status}
                         isBusy={this.state.isBusy}
+                        getPostList={this.getPostListContainer}
                     />
                 </div>
             );
@@ -426,7 +431,7 @@ export default class RhsThread extends React.Component {
                     onScroll={this.handleScroll}
                 >
                     <div
-                        ref='post-right__scroll'
+                        ref='postListContainer'
                         className='post-right__scroll'
                     >
                         <DateSeparator
@@ -444,6 +449,7 @@ export default class RhsThread extends React.Component {
                             status={rootStatus}
                             previewCollapsed={this.state.previewsCollapsed}
                             isBusy={this.state.isBusy}
+                            getPostList={this.getPostListContainer}
                         />
                         <div
                             ref='rhspostlist'
