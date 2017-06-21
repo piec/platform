@@ -44,6 +44,7 @@ func connectToSMTPServer(config *model.Config) (net.Conn, *model.AppError) {
 }
 
 func newSMTPClient(conn net.Conn, config *model.Config) (*smtp.Client, *model.AppError) {
+	l4g.Info("newSMTPClient", "XXX lol")
 	c, err := smtp.NewClient(conn, config.EmailSettings.SMTPServer+":"+config.EmailSettings.SMTPPort)
 	if err != nil {
 		l4g.Error(T("utils.mail.new_client.open.error"), err)
@@ -61,18 +62,23 @@ func newSMTPClient(conn net.Conn, config *model.Config) (*smtp.Client, *model.Ap
 
 	auth := smtp.PlainAuth("", config.EmailSettings.SMTPUsername, config.EmailSettings.SMTPPassword, config.EmailSettings.SMTPServer+":"+config.EmailSettings.SMTPPort)
 	if config.EmailSettings.ConnectionSecurity == model.CONN_SECURITY_TLS {
+		/*
 		if err = c.Auth(auth); err != nil {
 			return nil, model.NewLocAppError("SendMail", "utils.mail.new_client.auth.app_error", nil, err.Error())
 		}
+		*/
 	} else if config.EmailSettings.ConnectionSecurity == model.CONN_SECURITY_STARTTLS {
 		tlsconfig := &tls.Config{
 			InsecureSkipVerify: *config.EmailSettings.SkipServerCertificateVerification,
 			ServerName:         config.EmailSettings.SMTPServer,
 		}
+		l4g.Info("StartTLS", "XXX")
 		c.StartTLS(tlsconfig)
+/*
 		if err = c.Auth(auth); err != nil {
 			return nil, model.NewLocAppError("SendMail", "utils.mail.new_client.auth.app_error", nil, err.Error())
 		}
+*/
 	} else if config.EmailSettings.ConnectionSecurity == model.CONN_SECURITY_PLAIN {
 		// note: go library only supports PLAIN auth over non-tls connections
 		if err = c.Auth(auth); err != nil {
@@ -83,6 +89,7 @@ func newSMTPClient(conn net.Conn, config *model.Config) (*smtp.Client, *model.Ap
 }
 
 func TestConnection(config *model.Config) {
+	l4g.Info("TestConnection", "XXX lol")
 	if !config.EmailSettings.SendEmailNotifications {
 		return
 	}
