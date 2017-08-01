@@ -417,7 +417,7 @@ func getNotificationEmailBody(recipient *model.User, post *model.Post, channel *
 	var bodyPage *utils.HTMLTemplate
 	if emailNotificationContentsType == model.EMAIL_NOTIFICATION_CONTENTS_FULL {
 		bodyPage = utils.NewHTMLTemplate("post_body_full", recipient.Locale)
-		bodyPage.Props["PostMessage"] = GetMessageForNotification(post, translateFunc)
+		bodyPage.Props["PostMessage"] = "" //GetMessageForNotification(post, translateFunc)
 	} else {
 		bodyPage = utils.NewHTMLTemplate("post_body_generic", recipient.Locale)
 	}
