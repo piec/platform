@@ -395,7 +395,7 @@ func sendNotificationEmail(post *model.Post, user *model.User, channel *model.Ch
 
 	bodyPage := utils.NewHTMLTemplate("post_body", user.Locale)
 	bodyPage.Props["SiteURL"] = utils.GetSiteURL()
-	bodyPage.Props["PostMessage"] = GetMessageForNotification(post, userLocale)
+	bodyPage.Props["PostMessage"] = "" //GetMessageForNotification(post, userLocale)
 	if team.Name != "select_team" {
 		bodyPage.Props["TeamLink"] = teamURL + "/pl/" + post.Id
 	} else {
