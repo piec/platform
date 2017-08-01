@@ -70,9 +70,9 @@ func newSMTPClient(conn net.Conn, config *model.Config) (*smtp.Client, *model.Ap
 			ServerName:         config.EmailSettings.SMTPServer,
 		}
 		c.StartTLS(tlsconfig)
-		if err = c.Auth(auth); err != nil {
-			return nil, model.NewLocAppError("SendMail", "utils.mail.new_client.auth.app_error", nil, err.Error())
-		}
+		//if err = c.Auth(auth); err != nil {
+		//return nil, model.NewLocAppError("SendMail", "utils.mail.new_client.auth.app_error", nil, err.Error())
+		//}
 	} else if config.EmailSettings.ConnectionSecurity == model.CONN_SECURITY_PLAIN {
 		// note: go library only supports PLAIN auth over non-tls connections
 		if err = c.Auth(auth); err != nil {
